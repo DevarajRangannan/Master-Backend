@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: master-backend-application
+spec:
+  selector:
+    matchLabels:
+      app: master-backend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: master-backend
+    spec:
+      containers:
+      - name: master-backend
+        image: devarangan/master-backend
+        envFrom:
+        - secretRef:
+            name: my-secret
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: master-backend-service
+spec:
+  selector:
+    app: master-backend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    nodePort: 32000
+  type: NodePort
